@@ -1,7 +1,5 @@
 package succesful_Firm;
 
 public interface DecisionRule {
-
-	public Decision getDecision(Firm firm);
-
+	public int[] getDecision(Firm firm);
 }

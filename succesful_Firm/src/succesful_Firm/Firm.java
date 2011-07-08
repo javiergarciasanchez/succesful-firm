@@ -2,52 +2,49 @@ package succesful_Firm;
 
 import repast.simphony.context.Context;
 import repast.simphony.engine.schedule.ScheduledMethod;
+import repast.simphony.space.grid.Grid;
+import repast.simphony.valueLayer.ValueLayer;
 
 public class Firm {
 
-	public DecisionSpace dSpace;
-	public SearchMethod sMethod;
+	Grid<Object> dSpace;
+	ValueLayer[] perfSpaces;
 
-	public PerformanceSpaces perfSpaces;
+	public SearchMethod sMethod;
 	public DecisionRule dRule;
-	public PerformanceVector perfVector = null;
-	
+
 	protected static long firmIDCounter = 1;
 	protected String firmID = "Firm " + (firmIDCounter++);
 
-	public Firm(Context<Object> context, DecisionSpace decisionSpace,
-			SearchMethod searchMethod, DecisionRule dRule,
-			PerformanceSpaces perfSpaces) {
+	protected double underPerf = 0.0;
 
-		dSpace = decisionSpace;
-		sMethod = searchMethod;
+	public Firm(Context<Object> context, Grid<Object> dSpace,
+			ValueLayer[] perfSpaces, SearchMethod sMethod, DecisionRule dRule) {
 
+		this.dSpace = dSpace;
 		this.perfSpaces = perfSpaces;
+
+		this.sMethod = sMethod;
 		this.dRule = dRule;
 
 		context.add(this);
-
-		perfVector = perfSpaces.getPerformance(this,
-				this.dSpace.getLocation(this));
 
 	}
 
 	@ScheduledMethod(start = 1, interval = 1)
 	public void step() {
 
-		dSpace.applyDecision(this, this.dRule.getDecision(this));
+		dSpace.moveTo(this, dRule.getDecision(this));
 
-		perfVector = perfSpaces.getPerformance(this,
-				this.dSpace.getLocation(this));
-
-	}
-
-	public Decision getCurrDecision() {
-		return this.dSpace.getLocation(this);
 	}
 
 	public String getPerformance() {
-		return firmID + ": " + perfVector.toString();
+		String tmpStr = firmID + ": ";
+		for (ValueLayer vL : perfSpaces) {
+			tmpStr += vL.get(Utils.toDoubleArray(dSpace.getLocation(this)
+					.toIntArray(null))) + "; ";
+		}
+		return tmpStr;
 	}
 
 	public String toString() {
@@ -55,7 +52,21 @@ public class Firm {
 	}
 
 	public double getPerformance(int i) {
-		return perfVector.get(i);
+		return perfSpaces[i].get(Utils.toDoubleArray(dSpace.getLocation(this)
+				.toIntArray(null)));
 	}
-	
+
+	public boolean checkExit() {
+
+		for (ValueLayer vL : perfSpaces) {
+			double currPerf = vL.get(Utils.toDoubleArray(dSpace.getLocation(
+					this).toIntArray(null)));
+			underPerf += ((NKSpace) vL).underPerformance(currPerf);
+
+			if (underPerf > ((NKSpace) vL).maxUnderPerf)
+				return true;
+		}
+
+		return false;
+	}
 }

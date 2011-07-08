@@ -12,6 +12,12 @@
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
+				<parameter name="stopAt" displayName="Stop At" type="double" 
+						defaultValue="30.0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
 				<parameter name="numberOfFirms" displayName="Number of Firms" type="int" 
 						defaultValue="10" 
 						isReadOnly="false" 
@@ -28,6 +34,12 @@
 						defaultValue="10" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+				<parameter name="shockStdDev" displayName="Shock Standard Deviation" type="double" 
+						defaultValue="0.1" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$FloatConverter"
 									
 		/>
 				<parameter name="K" displayName="Epistatic interactions: K Parameter" type="int" 
