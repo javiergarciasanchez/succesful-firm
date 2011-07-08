@@ -2,12 +2,19 @@ package succesful_Firm;
 
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
+import repast.simphony.context.space.grid.GridFactory;
+import repast.simphony.context.space.grid.GridFactoryFinder;
 import repast.simphony.dataLoader.ContextBuilder;
+import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.essentials.RepastEssentials;
 import repast.simphony.random.RandomHelper;
+import repast.simphony.space.grid.GridBuilderParameters;
+import repast.simphony.space.grid.RandomGridAdder;
+import repast.simphony.space.grid.StrictBorders;
 
 public class LandscapeBuilder extends DefaultContext<Object> implements
 		ContextBuilder<Object> {
+	
 
 	@Override
 	public Context<Object> build(Context<Object> context) {
@@ -20,12 +27,34 @@ public class LandscapeBuilder extends DefaultContext<Object> implements
 			RandomHelper.setSeed(seed);
 
 		context.setId("succesful_Firm");
+		RunEnvironment.getInstance().endAt((Double) RepastEssentials.GetParameter("stopAt"));
+		
+		/*
+		 * Creates the decision space as a Grid
+		 */
+		int[] dims = new int[(Integer) RepastEssentials.GetParameter("N")];
+		int size = dims.length;
+		for (int i = 0; i < size; i++) {
+			dims[i] = Consts.ALLELES;
+		}
 
-		DecisionSpace decisionSpace = new DecisionSpace(context);
+		GridFactory gridFactory = GridFactoryFinder.createGridFactory(null);
+		gridFactory.createGrid("decisionSpace", context,
+				new GridBuilderParameters<Object>(new StrictBorders(),
+						new RandomGridAdder<Object>(), true, dims));
 
-		PerformanceSpaces perfSpaces = new PerformanceSpaces(context);
+		
+		/*
+		 * Creates the Performance Spaces as Value Layers
+		 */
+		int numOfPerformanceSp = (Integer) RepastEssentials.GetParameter("P");
 
-		new SpaceTimeManager(context, decisionSpace, perfSpaces);
+		for (int i = 0; i < numOfPerformanceSp; i++) {
+			context.addValueLayer(new NKSpace());		
+		}
+
+
+		new SpaceTimeManager(context);
 
 		return context;
 	}
