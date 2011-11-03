@@ -1,41 +1,45 @@
 package succesful_Firm;
 
 import repast.simphony.context.Context;
-import repast.simphony.engine.schedule.ScheduledMethod;
+import repast.simphony.essentials.RepastEssentials;
+import repast.simphony.parameter.Parameter;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.valueLayer.ValueLayer;
 
 public class Firm {
 
-	Grid<Object> dSpace;
-	ValueLayer[] perfSpaces;
+	public Grid<Object> dSpace;
+	public ValueLayer[] perfSpaces;
+	private double born;
 
-	public SearchMethod sMethod;
 	public DecisionRule dRule;
 
-	protected static long firmIDCounter = 1;
-	protected String firmID = "Firm " + (firmIDCounter++);
+	private static long firmIDCounter = 1;
+	private String firmID = "Firm " + (firmIDCounter++);
 
-	protected double underPerf = 0.0;
 
 	public Firm(Context<Object> context, Grid<Object> dSpace,
-			ValueLayer[] perfSpaces, SearchMethod sMethod, DecisionRule dRule) {
+			ValueLayer[] perfSpaces, DecisionRule dRule) {
 
 		this.dSpace = dSpace;
 		this.perfSpaces = perfSpaces;
 
-		this.sMethod = sMethod;
 		this.dRule = dRule;
+		
+		born = RepastEssentials.GetTickCount();
 
 		context.add(this);
 
 	}
+	
+    @Parameter (displayName = "Age", usageName = "age")
+    public double getAge() {
+        return RepastEssentials.GetTickCount() - born;
+    }
 
-	@ScheduledMethod(start = 1, interval = 1)
-	public void step() {
-
-		dSpace.moveTo(this, dRule.getDecision(this));
-
+	public void decide() {
+		int[] dec = dRule.getDecision(this);
+		dSpace.moveTo(this, dec);
 	}
 
 	public String getPerformance() {
@@ -47,26 +51,31 @@ public class Firm {
 		return tmpStr;
 	}
 
-	public String toString() {
-		return firmID;
-	}
-
 	public double getPerformance(int i) {
 		return perfSpaces[i].get(Utils.toDoubleArray(dSpace.getLocation(this)
 				.toIntArray(null)));
 	}
 
+	public double getPerformance(ValueLayer perfSpace) {
+		return perfSpace.get(Utils.toDoubleArray(dSpace.getLocation(this)
+				.toIntArray(null)));
+	}
+
 	public boolean checkExit() {
-
-		for (ValueLayer vL : perfSpaces) {
-			double currPerf = vL.get(Utils.toDoubleArray(dSpace.getLocation(
-					this).toIntArray(null)));
-			underPerf += ((NKSpace) vL).underPerformance(currPerf);
-
-			if (underPerf > ((NKSpace) vL).maxUnderPerf)
+		/*
+		 * if firm is below min performance on any performance space, it should exit
+		 */
+		for (ValueLayer perfSpace : perfSpaces) {
+			if (getPerformance(perfSpace) < ((FourierSpace) perfSpace).minPerformance()){
 				return true;
+			}
 		}
-
+		
 		return false;
+		
+	}
+
+	public String toString() {
+		return firmID;
 	}
 }
