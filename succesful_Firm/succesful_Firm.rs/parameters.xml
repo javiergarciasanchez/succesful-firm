@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <parameters>
-					<parameter name="randomSeed" displayName="Default Random Seed" type="int" 
+					<parameter name="scale" displayName="Scale for 3D agents display" type="double" 
+						defaultValue="40.0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+				<parameter name="randomSeed" displayName="Default Random Seed" type="int" 
 						defaultValue="__NULL__"
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
-				<parameter name="P" displayName="Number of Performance Dimensions" type="int" 
-						defaultValue="1" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
-									
-		/>
-				<parameter name="stopAt" displayName="Stop At" type="double" 
-						defaultValue="30.0" 
+				<parameter name="shockProbability" displayName="Shock Probability" type="double" 
+						defaultValue="0.3" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
-				<parameter name="numberOfFirms" displayName="Number of Firms" type="int" 
-						defaultValue="10" 
+				<parameter name="M" displayName="Size of Decision Space" type="int" 
+						defaultValue="64" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
@@ -30,20 +30,62 @@
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
 									
 		/>
-				<parameter name="N" displayName="N Parameter of NK Model" type="int" 
+				<parameter name="shockStdDev" displayName="Shock Standard Deviation" type="double" 
+						defaultValue="0.3" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+				<parameter name="ruggedness" displayName="Ruggedness" type="double" 
+						defaultValue="1.0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+				<parameter name="potencialEntrants" displayName="Potencial Entrants" type="int" 
 						defaultValue="10" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
-				<parameter name="shockStdDev" displayName="Shock Standard Deviation" type="double" 
-						defaultValue="0.1" 
+				<parameter name="exitPercentile" displayName="Exit Percentile ( 0 to 100 )" type="double" 
+						defaultValue="30.0" 
 						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$FloatConverter"
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
-				<parameter name="K" displayName="Epistatic interactions: K Parameter" type="int" 
-						defaultValue="0" 
+				<parameter name="P" displayName="Number of Performance Dimensions" type="int" 
+						defaultValue="1" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+				<parameter name="stopAt" displayName="Stop At" type="double" 
+						defaultValue="300.0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+				<parameter name="vertShift" displayName="Vertical Shift for 3D agents display" type="double" 
+						defaultValue="-11.0" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+				<parameter name="noiseStdDev" displayName="Noise Standard Deviation" type="double" 
+						defaultValue="0.1" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+				<parameter name="freqs" displayName="# Frecuencies in Fourier Series" type="int" 
+						defaultValue="10" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+				<parameter name="shockFreq" displayName="Spreading Frequency of Shock" type="int" 
+						defaultValue="5" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
