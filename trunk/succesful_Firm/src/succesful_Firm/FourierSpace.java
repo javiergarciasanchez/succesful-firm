@@ -4,6 +4,7 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatisticsImpl;
 import cern.jet.random.Binomial;
 import cern.jet.random.Normal;
 import repast.simphony.context.Context;
+import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.essentials.RepastEssentials;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.Dimensions;
@@ -12,6 +13,7 @@ import repast.simphony.space.grid.GridPoint;
 import repast.simphony.valueLayer.GridFunction;
 import repast.simphony.valueLayer.GridValueLayer;
 import repast.simphony.valueLayer.ValueLayer;
+import repast.simphony.visualization.IDisplay;
 import static java.lang.Math.*;
 import succesful_Firm.Consts;
 
@@ -25,15 +27,19 @@ public class FourierSpace implements ValueLayer {
 	private GridValueLayer grid, origGrid;
 	private Context<Object> context;
 	private Grid<Object> dSpace;
+	
+	private boolean firmsMoved;
+	private double minPerf;
+	
+	private double minValue = 0.0, maxValue = 0.0;
 
-	private Normal noiseNormal = RandomHelper.createNormal(0.0,
+	private Normal noiseNormal = RandomHelper.createNormal(
+			(Consts.MAX_COEF - Consts.MIN_COEF) / 2.0,
 			(Double) RepastEssentials.GetParameter("noiseStdDev"));
 	private Normal shockNormal = RandomHelper.createNormal(0.0,
 			(Double) RepastEssentials.GetParameter("shockStdDev"));
 	private Binomial shockProb = RandomHelper.createBinomial(1,
 			(Double) RepastEssentials.GetParameter("shockProbability"));
-
-	public double maxUnderPerf = Consts.MAX_UNDER_PERF;
 
 	public FourierSpace(int id, Context<Object> context, Grid<Object> dSpace,
 			int... dims) {
@@ -53,7 +59,7 @@ public class FourierSpace implements ValueLayer {
 				.GetParameter("ruggedness");
 
 		/*
-		 * The size of all dimensions is the same The size is the number of
+		 * The size of all dimensions is the same. The size is the number of
 		 * steps: points - 1
 		 */
 		double size = dims[0] - 1.0;
@@ -73,16 +79,23 @@ public class FourierSpace implements ValueLayer {
 				freqX = (nX == 1) ? 1.0 : (nX - 1) * size / (freqs - 1);
 				freqZ = (nZ == 1) ? 1.0 : (nZ - 1) * size / (freqs - 1);
 
-				coef[nX - 1][nZ - 1] = RandomHelper.nextDoubleFromTo(0.0, 1.0)
+				coef[nX - 1][nZ - 1] = RandomHelper.nextDoubleFromTo(
+						Consts.MIN_COEF, Consts.MAX_COEF)
 						* pow(pow(freqX, 2.0) + pow(freqZ, 2.0),
 								-(ruggedness + 1.0) / 2.0);
 
-				shiftX[nX - 1][nZ - 1] = ((nX == 1) && (nZ == 1)) ? 0.0
-						: RandomHelper.nextDoubleFromTo(0.0, 2.0 * PI);
+				shiftX[nX - 1][nZ - 1] = RandomHelper.nextDoubleFromTo(
+						Consts.MIN_COS, Consts.MAX_COS);
+				shiftZ[nX - 1][nZ - 1] = RandomHelper.nextDoubleFromTo(
+						Consts.MIN_COS, Consts.MAX_COS);
 
-				shiftZ[nX - 1][nZ - 1] = ((nX == 1) && (nZ == 1)) ? 0.0
-						: RandomHelper.nextDoubleFromTo(0.0, 2.0 * PI);
-
+				/*
+				 * shiftX[nX - 1][nZ - 1] = ((nX == 1) && (nZ == 1)) ? 0.0 :
+				 * RandomHelper.nextDoubleFromTo(0.0, 2.0 * PI);
+				 * 
+				 * shiftZ[nX - 1][nZ - 1] = ((nX == 1) && (nZ == 1)) ? 0.0 :
+				 * RandomHelper.nextDoubleFromTo(0.0, 2.0 * PI);
+				 */
 			}
 		}
 
@@ -110,6 +123,10 @@ public class FourierSpace implements ValueLayer {
 
 				grid.set(tmpSum, x, z);
 				origGrid.set(tmpSum, x, z);
+				
+				minValue = (tmpSum < minValue? tmpSum : minValue);
+				maxValue = (tmpSum > maxValue? tmpSum : maxValue);
+				
 				tmpSum = 0.0;
 
 			}
@@ -142,8 +159,10 @@ public class FourierSpace implements ValueLayer {
 		 */
 		if (shockProb.nextInt() == 1) {
 
-			double shiftX = RandomHelper.nextDoubleFromTo(0.0, 2.0 * PI);
-			double shiftZ = RandomHelper.nextDoubleFromTo(0.0, 2.0 * PI);
+			double shiftX = RandomHelper.nextDoubleFromTo(Consts.MIN_COS,
+					Consts.MAX_COS);
+			double shiftZ = RandomHelper.nextDoubleFromTo(Consts.MIN_COS,
+					Consts.MAX_COS);
 			int freq = (Integer) RepastEssentials.GetParameter("shockFreq");
 			double coef = shockNormal.nextDouble()
 					* pow(pow(freq, 2.0) + pow(freq, 2.0),
@@ -166,8 +185,20 @@ public class FourierSpace implements ValueLayer {
 
 		// Introduce noise
 		grid.forEach(new Noise(), new GridPoint(0, 0), size + 1, size + 1);
-
+		
+/*		if (!RunEnvironment.getInstance().isBatch()) {
+			checkSpace3DScale();
+		}
+*/		
 	}
+
+	/*private void checkSpace3DScale() {
+		// TODO Auto-generated method stub
+		
+		for (IDisplay disp : runState.getGUIRegistry().getDisplays()){
+			
+		}
+	}*/
 
 	private class Noise implements GridFunction {
 
@@ -194,7 +225,20 @@ public class FourierSpace implements ValueLayer {
 		return grid.getDimensions();
 	}
 
-	public double minPerformance() {
+	public boolean checkExit(Firm firm) {
+		
+		if (firmsMoved){			
+			updMinPerf();
+			firmsMoved = false;
+		}
+		
+		if (firm.getPerformance(this) < minPerf)
+			return true;
+		else
+			return false;
+	}
+
+	private void updMinPerf() {
 
 		DescriptiveStatisticsImpl firmsPerf = new DescriptiveStatisticsImpl(
 				dSpace.size());
@@ -203,8 +247,44 @@ public class FourierSpace implements ValueLayer {
 			firmsPerf.addValue(((Firm) f).getPerformance(this));
 		}
 
-		return firmsPerf.getPercentile((Double) RepastEssentials
+		minPerf = firmsPerf.getPercentile((Double) RepastEssentials
 				.GetParameter("exitPercentile"));
 
 	}
+
+	public void setFirmsMoved(boolean firmsMoved) {
+		this.firmsMoved = firmsMoved;
+	}
+
+	public boolean checkEntry(Firm firm) {
+		
+		if (firmsMoved){			
+			updMinPerf();
+			firmsMoved = false;
+		}
+		
+		if (firm.getPerformance(this) < minPerf)
+			return false;
+		else
+			return true;
+		
+	}
+	
+	public String getVL(){
+		String tmpStr="{";
+		
+		int size = (int) grid.getDimensions().getDimension(0) - 1;
+		
+		for (int x = 0; x <= size; x++) {
+			tmpStr = tmpStr + "{";
+			for (int z = 0; z <= size; z++) {
+				tmpStr = tmpStr + grid.get(x, z)+", ";
+			}
+			tmpStr = tmpStr + "}";
+		}
+		tmpStr = tmpStr + "}";
+		return tmpStr;
+		
+	}
+
 }
