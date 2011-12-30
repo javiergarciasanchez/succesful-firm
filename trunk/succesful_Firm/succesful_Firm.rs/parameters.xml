@@ -13,19 +13,19 @@
 									
 		/>
 				<parameter name="shockProbability" displayName="Shock Probability" type="double" 
-						defaultValue="0.3" 
+						defaultValue="3.0E-35" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
-				<parameter name="M" displayName="Size of Decision Space" type="int" 
+				<parameter name="spaceSize" displayName="Size of Decision Space" type="int" 
 						defaultValue="64" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
 				<parameter name="utilityWeights" displayName="Utility Weights" type="java.lang.String" 
-						defaultValue="1" 
+						defaultValue="1;0" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
 									
@@ -54,12 +54,6 @@
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
-				<parameter name="P" displayName="Number of Performance Dimensions" type="int" 
-						defaultValue="1" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
-									
-		/>
 				<parameter name="stopAt" displayName="Stop At" type="double" 
 						defaultValue="300.0" 
 						isReadOnly="false" 
@@ -76,6 +70,12 @@
 						defaultValue="0.1" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
+				<parameter name="perfDims" displayName="Number of Performance Dimensions" type="int" 
+						defaultValue="2" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
 				<parameter name="freqs" displayName="# Frecuencies in Fourier Series" type="int" 
