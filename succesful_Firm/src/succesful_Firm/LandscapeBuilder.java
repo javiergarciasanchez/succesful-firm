@@ -13,7 +13,7 @@ import repast.simphony.random.RandomHelper;
 import repast.simphony.space.continuous.SimpleCartesianAdder;
 import repast.simphony.space.grid.Grid;
 import repast.simphony.space.grid.GridBuilderParameters;
-import repast.simphony.space.grid.RandomGridAdder;
+import repast.simphony.space.grid.SimpleGridAdder;
 import repast.simphony.valueLayer.ValueLayer;
 
 public class LandscapeBuilder extends DefaultContext<Object> implements
@@ -38,38 +38,49 @@ public class LandscapeBuilder extends DefaultContext<Object> implements
 		 * Creates the decision space as a Grid
 		 */
 		int[] dims = new int[2];
-		dims[0] = (Integer) RepastEssentials.GetParameter("M");
+		dims[0] = (Integer) RepastEssentials.GetParameter("spaceSize");
 		dims[1] = dims[0];
 
 		GridFactory gridFactory = GridFactoryFinder.createGridFactory(null);
+
 		Grid<Object> decisionSpace = gridFactory.createGrid("decisionSpace",
 				context, new GridBuilderParameters<Object>(
 						new repast.simphony.space.grid.StickyBorders(),
-						new RandomGridAdder<Object>(), true, dims));
-		/*
-		 * If not a batch run it adds listener to move objects in space3Ds
-		 */
-		if (!instance.isBatch()) {
-			decisionSpace.addProjectionListener(new Space3DListener());
-		}
+						new SimpleGridAdder<Object>(), true, dims));
 
 		/*
 		 * Creates the Performance Spaces as Value Layers
 		 */
-		int numOfPerformanceSp = (Integer) RepastEssentials.GetParameter("P");
+		int numOfPerformanceSp = (Integer) RepastEssentials
+				.GetParameter("perfDims");
 		ValueLayer[] perfSpaces = new ValueLayer[numOfPerformanceSp];
-		
+
 		for (int i = 0; i < numOfPerformanceSp; i++) {
-			
-			perfSpaces[i] = new FourierSpace(i+1, context, decisionSpace, dims);
-			
+
+			perfSpaces[i] = new FourierSpace(i + 1, context, decisionSpace,
+					dims);
+
 			context.addValueLayer(perfSpaces[i]);
-			
-			if (!instance.isBatch()) {
-				createSpace3D(i+1, dims, context);
-			}
-			
+
+			// if not a batch run it creates the corresponding 3D space
+/*			if (!instance.isBatch()) {
+				createSpace3D(i + 1, dims, context);
+			}*/
+
 		}
+
+		/*
+		 * If not a batch run it adds listener to move objects in 3D spaces
+		 */
+/*		if (!instance.isBatch()) {
+			decisionSpace.addProjectionListener(new Space3DListener());
+		}*/
+
+		/*
+		 * Sets a flag on all perfSpaces to indicated some calculations should
+		 * be updated when firms are moved
+		 */
+		decisionSpace.addProjectionListener(new setFirmsMoved(perfSpaces));
 
 		new SpaceTimeManager(context, decisionSpace, perfSpaces);
 
@@ -78,8 +89,8 @@ public class LandscapeBuilder extends DefaultContext<Object> implements
 
 	private void createSpace3D(int id, int[] dims, Context<Object> context) {
 		/*
-		 * Creates the 3 dimensional continuous space to represent agents walking
-		 * over landscape
+		 * Creates the 3 dimensional continuous space to represent agents
+		 * walking over landscape
 		 */
 		double[] dims3D = new double[3];
 		double[] origin3D = new double[3];
@@ -93,16 +104,16 @@ public class LandscapeBuilder extends DefaultContext<Object> implements
 		origin3D[2] = 0.0;
 
 		// y dimension - Height
-		dims3D[1] = 64.0;
-		origin3D[1] = 32.0;
+		dims3D[1] = Consts.DIMS3D_HEIGHT;
+		origin3D[1] = Consts.ORIGIN3D_HEIGHT;
 
 		ContinuousSpaceFactory space3DFactory = ContinuousSpaceFactoryFinder
 				.createContinuousSpaceFactory(null);
-		space3DFactory.createContinuousSpace(
-				"space3D " + id, context, new SimpleCartesianAdder<Object>(),
+		space3DFactory.createContinuousSpace("space3D " + id, context,
+				new SimpleCartesianAdder<Object>(),
 				new repast.simphony.space.continuous.StickyBorders(), dims3D,
 				origin3D);
-		
+
 		new PerformanceLevel(id, dims, context);
 
 	}

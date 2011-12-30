@@ -15,7 +15,8 @@ public class SpaceTimeManager {
 	private Grid<Object> dSpace;
 	private ValueLayer[] perfSpaces;
 
-	public SpaceTimeManager(Context<Object> context, Grid<Object> dSpace, ValueLayer[] perfSpaces) {
+	public SpaceTimeManager(Context<Object> context, Grid<Object> dSpace,
+			ValueLayer[] perfSpaces) {
 
 		this.context = context;
 		this.dSpace = dSpace;
@@ -26,61 +27,53 @@ public class SpaceTimeManager {
 
 	@ScheduledMethod(start = 1, interval = 1)
 	public void step() {
-		
-		checkEntry();
-		
+
+		manageEntry();
+
 		for (Object f : context.getObjects(Firm.class)) {
-			((Firm)f).decide();
+			((Firm) f).decide();
 		}
-		
+
 		// Random variation on every step
-		for (ValueLayer perfSpace : perfSpaces){			
+		for (ValueLayer perfSpace : perfSpaces) {
 			((FourierSpace) perfSpace).introduceRandomness();
 		}
-		
-		
+
 		/*
 		 * Exit is checked only after all firms have made their decisions
 		 */
-		manageExits();
+		manageExit();
 
 	}
-	
-	private void manageExits() {
-		
+
+	private void manageExit() {
+
 		IndexedIterable<Object> firms = context.getObjects(Firm.class);
-		
-		
+
 		List<Firm> tmpList = new ArrayList<Firm>(firms.size());
-		
+
 		for (Object f : firms) {
-			
-			if (  ((Firm)f).checkExit() ) tmpList.add((Firm)f);
-						
+
+			if (((Firm) f).checkExit())
+				tmpList.add((Firm) f);
+
 		}
-		
-		for(Firm f: tmpList) {
+
+		for (Firm f : tmpList) {
 			RepastEssentials.RemoveAgentFromModel(f);
 		}
-		
+
 	}
 
-
-	private void checkEntry(){
+	private void manageEntry() {
 		int numberOfFirms = (Integer) RepastEssentials
-		.GetParameter("potencialEntrants");
-		
-		List<Firm> tmpList = new ArrayList<Firm>(numberOfFirms);
-		
-		Firm firm;
-		
+				.GetParameter("potencialEntrants");
+
+		Firm f;
+
 		for (int i = 1; i <= numberOfFirms; i++) {
-			firm = new Firm(context, dSpace, perfSpaces, new UtilityMaximizer());
-			if (  firm.checkExit() ) tmpList.add(firm);
-		}
-		
-		for(Firm f: tmpList) {
-			RepastEssentials.RemoveAgentFromModel(f);
+			f = new Firm(context, dSpace, perfSpaces, new UtilityMaximizer());
+			if (!f.checkEntry()) RepastEssentials.RemoveAgentFromModel(f);
 		}
 
 	}

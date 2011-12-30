@@ -20,7 +20,11 @@ public class Space3DListener implements ProjectionListener<Object> {
 		if (evt.getSubject() instanceof Firm) {
 			Firm firm = (Firm) evt.getSubject();
 			if (evt.getType() == ProjectionEvent.OBJECT_ADDED) {
-				addObject(firm);
+				/*
+				 * Do nothing because firm are automatically added to
+				 * projections
+				 */
+				// addObject(firm);
 			} else if (evt.getType() == ProjectionEvent.OBJECT_MOVED) {
 				Grid<Object> grid = (Grid<Object>) evt.getProjection();
 				moveObject(grid, firm);
@@ -29,58 +33,58 @@ public class Space3DListener implements ProjectionListener<Object> {
 
 	}
 
-	private void addObject(Firm firm) {
-
-		int numOfPerformanceSp = (Integer) RepastEssentials.GetParameter("P");
-		for (int i = 0; i < numOfPerformanceSp; i++) {
-
-			@SuppressWarnings("unchecked")
-			ContinuousSpace<Object> space3D = RepastEssentials
-					.FindContinuousSpace("space3D " + (i + 1));
-
-			space3D.getAdder().add(space3D, firm);
-
-		}
-
-	}
-
 	/*
-	 * Because RandomGridAdder is used in main decision space, the event could
-	 * be fired even if the firm is not yet added to the space3D In that case,
-	 * no movement is done
+	 * private void addObject(Firm firm) {
+	 * 
+	 * int numOfPerformanceSp = (Integer) RepastEssentials
+	 * .GetParameter("perfDims"); for (int i = 0; i < numOfPerformanceSp; i++) {
+	 * 
+	 * @SuppressWarnings("unchecked") ContinuousSpace<Object> space3D =
+	 * RepastEssentials .FindContinuousSpace("space3D " + (i + 1));
+	 * 
+	 * space3D.getAdder().add(space3D, firm);
+	 * 
+	 * }
+	 * 
+	 * }
 	 */
-	private void moveObject(Grid<Object> grid, Firm firm) {
 
+
+	private void moveObject(Grid<Object> grid, Firm firm) {
+		int size = (Integer) RepastEssentials.GetParameter("spaceSize") - 1;
 		GridPoint pt = grid.getLocation(firm);
 		double[] dec3D = new double[3];
 
 		dec3D[0] = pt.getX();
-		dec3D[2] = (Integer) RepastEssentials.GetParameter("M") - 1.0
-				- pt.getY();
+		dec3D[2] = size - pt.getY();
 
-		int numOfPerformanceSp = (Integer) RepastEssentials.GetParameter("P");
+		int numOfPerformanceSp = (Integer) RepastEssentials
+				.GetParameter("perfDims");
 		double scale = (Double) RepastEssentials.GetParameter("scale");
 		double vertShift = (Double) RepastEssentials.GetParameter("vertShift");
 		for (int i = 0; i < numOfPerformanceSp; i++) {
 
 			dec3D[1] = ((Firm) firm).getPerformance(i);
-			
-			//scale adjustment
+
+			// scale adjustment
 			dec3D[1] = dec3D[1] * scale + vertShift;
 
 			@SuppressWarnings("unchecked")
 			ContinuousSpace<Object> space3D = RepastEssentials
 					.FindContinuousSpace("space3D " + (i + 1));
-
-			try {
-
-				space3D.moveTo(firm, dec3D);
-			} catch (IllegalArgumentException e) {
-				// if the agent was not added, no movement is done
-			}
+ 
+			space3D.moveTo(firm, dec3D);
 
 		}
 
 	}
 
 }
+
+
+/*
+ *  runState.getGUIRegistry().getDisplays(), returns java.util.List<IDisplay> 
+ *  IDisplay.getLayout() returns Layout
+ *  
+ *  Falta saber cómo identifico el nombre del IDisplay
+*/
