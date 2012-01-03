@@ -1,0 +1,84 @@
+<repast.simphony.visualization.engine.DefaultDisplayDescriptor>
+  <name>No Profit</name>
+  <type>THREE_D</type>
+  <styles>
+    <entry>
+      <string>succesful_Firm.Firm</string>
+      <string>repast.simphony.visualization.editedStyle.EditedStyle3D</string>
+    </entry>
+  </styles>
+  <editedStyles>
+    <entry>
+      <string>succesful_Firm.Firm</string>
+      <string>succesful_Firm.Firm.style_10.xml</string>
+    </entry>
+  </editedStyles>
+  <netStyles/>
+  <editedNetStyles/>
+  <frequency>ON_MOVE</frequency>
+  <schedParams>
+    <start>1.0</start>
+    <interval>1.0</interval>
+    <priority>-Infinity</priority>
+    <duration>-1.0</duration>
+    <frequency>REPEAT</frequency>
+  </schedParams>
+  <layoutClassName>foo.bar.baz</layoutClassName>
+  <valueLayerStyleName>repast.simphony.visualization.editedStyle.EditedValueLayerStyle3D</valueLayerStyleName>
+  <valueLayerEditedStyleName>Fourier_Space 2.style_0.xml</valueLayerEditedStyleName>
+  <layoutProjection>space3D 2</layoutProjection>
+  <layoutInterval>0</layoutInterval>
+  <layerOrder>
+    <entry>
+      <string>succesful_Firm.Firm</string>
+      <int>0</int>
+    </entry>
+  </layerOrder>
+  <projections>
+    <repast.simphony.scenario.data.ProjectionData>
+      <id>space3D 2</id>
+      <attributes/>
+      <type>CONTINUOUS_SPACE</type>
+    </repast.simphony.scenario.data.ProjectionData>
+  </projections>
+  <valueLayers>
+    <string>Fourier_Space 2</string>
+  </valueLayers>
+  <visualizationProperties class="repast.simphony.visualization.UnitSizeLayoutProperties">
+    <unitSize>0.05</unitSize>
+  </visualizationProperties>
+  <projectionDescriptors>
+    <entry>
+      <string>space3D 2</string>
+      <repast.simphony.visualization.continuous.ContinuousProjectionDescriptor>
+        <proj reference="../../../../projections/repast.simphony.scenario.data.ProjectionData"/>
+        <props>
+          <entry>
+            <string>repast.simphony.visualization.continuous.ContinuousDecorator</string>
+            <map>
+              <entry>
+                <string>UNIT_SIZE</string>
+                <float>0.05</float>
+              </entry>
+              <entry>
+                <string>SHOW</string>
+                <boolean>true</boolean>
+              </entry>
+              <entry>
+                <string>COLOR</string>
+                <int>-1</int>
+              </entry>
+            </map>
+          </entry>
+        </props>
+      </repast.simphony.visualization.continuous.ContinuousProjectionDescriptor>
+    </entry>
+  </projectionDescriptors>
+  <props/>
+  <backgroundColor>
+    <red>0</red>
+    <green>0</green>
+    <blue>0</blue>
+    <alpha>255</alpha>
+  </backgroundColor>
+</repast.simphony.visualization.engine.DefaultDisplayDescriptor>
