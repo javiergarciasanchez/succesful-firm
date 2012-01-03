@@ -68,6 +68,11 @@ public class LandscapeBuilder extends DefaultContext<Object> implements
 			}*/
 
 		}
+		
+		/*
+		 * Creates Data Collector
+		 */
+		new DataCollector(context, perfSpaces);
 
 		/*
 		 * If not a batch run it adds listener to move objects in 3D spaces
