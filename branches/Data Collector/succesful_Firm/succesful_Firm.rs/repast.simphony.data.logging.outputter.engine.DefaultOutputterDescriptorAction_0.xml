@@ -1,0 +1,35 @@
+<repast.simphony.data.logging.outputter.engine.DefaultFileOutputterDescriptor>
+  <name>Profit</name>
+  <outputterFactory class="repast.simphony.data.logging.outputter.engine.DefaultFileOutputterDescriptor$1">
+    <outer-class reference="../.."/>
+  </outputterFactory>
+  <dataSetHandler>
+    <dataSets>
+      <string>Firm Position</string>
+    </dataSets>
+  </dataSetHandler>
+  <streamHandler>
+    <columns>
+      <string>Tick</string>
+      <string>toString</string>
+      <string>PosX</string>
+      <string>PosY</string>
+      <string>Profit</string>
+      <string>NoProfPerf</string>
+    </columns>
+  </streamHandler>
+  <isBatchAction>false</isBatchAction>
+  <dataSetId class="string">Firm Position</dataSetId>
+  <fileName>Output\Firm Data</fileName>
+  <insertTimeToFileName>false</insertTimeToFileName>
+  <insertBatchToFileName>false</insertBatchToFileName>
+  <insertRunToFileName>false</insertRunToFileName>
+  <appendToFile>false</appendToFile>
+  <writeHeader>false</writeHeader>
+  <formatType class="repast.simphony.data.logging.outputter.LMDelimitedFormatter">
+    <streamHandler>
+      <columns/>
+    </streamHandler>
+  </formatType>
+  <delimiter>,</delimiter>
+</repast.simphony.data.logging.outputter.engine.DefaultFileOutputterDescriptor>
