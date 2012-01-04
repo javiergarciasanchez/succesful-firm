@@ -10,8 +10,6 @@ interface Consts {
 	public static final double MAX_COEF = 1.0;
 	public static final double MIN_COS = -PI / pow(2.0, 1.0/2.0);
 	public static final double MAX_COS = PI / pow(2.0, 1.0/2.0);
-	
-	public static final double DIMS3D_HEIGHT = 64.0;
-	public static final double ORIGIN3D_HEIGHT = 32.0;
+
 
 }
