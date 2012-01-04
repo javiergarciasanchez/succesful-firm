@@ -1,0 +1,32 @@
+<repast.simphony.data.logging.outputter.engine.DefaultFileOutputterDescriptor>
+  <name>ValueLayer</name>
+  <outputterFactory class="repast.simphony.data.logging.outputter.engine.DefaultFileOutputterDescriptor$1">
+    <outer-class reference="../.."/>
+  </outputterFactory>
+  <dataSetHandler>
+    <dataSets>
+      <string>ValueLayer</string>
+    </dataSets>
+  </dataSetHandler>
+  <streamHandler>
+    <columns>
+      <string>Tick</string>
+      <string>Name</string>
+      <string>VL</string>
+    </columns>
+  </streamHandler>
+  <isBatchAction>false</isBatchAction>
+  <dataSetId class="string">ValueLayer</dataSetId>
+  <fileName>output\ValueLayer.csv</fileName>
+  <insertTimeToFileName>false</insertTimeToFileName>
+  <insertBatchToFileName>false</insertBatchToFileName>
+  <insertRunToFileName>false</insertRunToFileName>
+  <appendToFile>false</appendToFile>
+  <writeHeader>false</writeHeader>
+  <formatType class="repast.simphony.data.logging.outputter.LMDelimitedFormatter">
+    <streamHandler>
+      <columns/>
+    </streamHandler>
+  </formatType>
+  <delimiter>,</delimiter>
+</repast.simphony.data.logging.outputter.engine.DefaultFileOutputterDescriptor>
