@@ -63,23 +63,18 @@ public class LandscapeBuilder extends DefaultContext<Object> implements
 			context.addValueLayer(perfSpaces[i]);
 
 			// if not a batch run it creates the corresponding 3D space
-/*			if (!instance.isBatch()) {
+			if (!instance.isBatch()) {
 				createSpace3D(i + 1, dims, context);
-			}*/
+			}
 
 		}
-		
-		/*
-		 * Creates Data Collector
-		 */
-		new DataCollector(context, perfSpaces);
 
-		/*
+	/*
 		 * If not a batch run it adds listener to move objects in 3D spaces
 		 */
-/*		if (!instance.isBatch()) {
+		if (!instance.isBatch()) {
 			decisionSpace.addProjectionListener(new Space3DListener());
-		}*/
+		}
 
 		/*
 		 * Sets a flag on all perfSpaces to indicated some calculations should
@@ -109,8 +104,8 @@ public class LandscapeBuilder extends DefaultContext<Object> implements
 		origin3D[2] = 0.0;
 
 		// y dimension - Height
-		dims3D[1] = Consts.DIMS3D_HEIGHT;
-		origin3D[1] = Consts.ORIGIN3D_HEIGHT;
+		dims3D[1] = (Double) RepastEssentials.GetParameter("dims3DHeight");
+		origin3D[1] = dims3D[1] /2.0;
 
 		ContinuousSpaceFactory space3DFactory = ContinuousSpaceFactoryFinder
 				.createContinuousSpaceFactory(null);
